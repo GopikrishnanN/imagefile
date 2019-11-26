@@ -1,6 +1,7 @@
 package com.prng.myapplication
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -8,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.prng.imagefilepicker.ConstantsCustomGallery
+import com.prng.imagefilepicker.Image
 import com.prng.imagefilepicker.ImageListActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -24,12 +27,13 @@ class MainActivity : AppCompatActivity() {
                 if (!checkAccessFineLocationPermission() || !checkWriteExternalStoragePermission()) {
                     requestPermission()
                 } else {
-                    startActivity(Intent(applicationContext, ImageListActivity::class.java))
+                    startActivityForResult(Intent(applicationContext, ImageListActivity::class.java)
+                        .putExtra(ConstantsCustomGallery.INTENT_EXTRA_LIMIT, 10), ConstantsCustomGallery.IMAGE_PICKER_REQUEST_CODE)
                 }
             } else {
-                startActivity(Intent(applicationContext, ImageListActivity::class.java))
+                startActivityForResult(Intent(applicationContext, ImageListActivity::class.java)
+                    .putExtra(ConstantsCustomGallery.INTENT_EXTRA_LIMIT, 10), ConstantsCustomGallery.IMAGE_PICKER_REQUEST_CODE)
             }
-
         })
     }
 
@@ -63,4 +67,16 @@ class MainActivity : AppCompatActivity() {
             PERMISSION_REQUEST_CODE
         )
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == ConstantsCustomGallery.IMAGE_PICKER_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
+            //The array list has the image paths of the selected images
+//            val images =
+//                data.getParcelableArrayListExtra(ConstantsCustomGallery.INTENT_EXTRA_IMAGES)
+
+            var imagesDataArrayList = data.getParcelableArrayListExtra<Image>(ConstantsCustomGallery.INTENT_EXTRA_IMAGES)
+        }
+    }
+
 }

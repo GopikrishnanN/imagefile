@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ImageFilePicker</string>
+    <string name="limit_exceeded">Can select a maximum of %d images</string>
+    <string name="tap_select_image_title_txt">Tap to select images</string>
 </resources>

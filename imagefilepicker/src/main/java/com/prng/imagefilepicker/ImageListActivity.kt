@@ -29,6 +29,7 @@ import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import kotlinx.android.synthetic.main.header_title_layout.*
 
 
 class ImageListActivity : AppCompatActivity() {
@@ -40,15 +41,30 @@ class ImageListActivity : AppCompatActivity() {
     )
 
     private var albums: ArrayList<Album>? = null
+    private var imageSelectCount = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_image_list)
+        initGetIntent()
+        initialization()
+    }
 
+    private fun initGetIntent() {
+        imageSelectCount = intent.extras!!.getInt(ConstantsCustomGallery.INTENT_EXTRA_LIMIT)
+    }
+
+    private fun initialization() {
         imagePickerRV.setHasFixedSize(false)
         imagePickerRV.layoutManager =
             GridLayoutManager(applicationContext, 2, GridLayoutManager.VERTICAL, false);
         getFilePaths()
+        titleTV.setText("Select image album")
+
+        backIconIV.setOnClickListener({
+            finish()
+        })
     }
 
     fun getFilePaths() {
@@ -120,7 +136,8 @@ class ImageListActivity : AppCompatActivity() {
                 override fun ChoosedImage(imageName: String) {
                     val intent = Intent(applicationContext, ImageItemListActivity::class.java)
                     intent.putExtra("album", imageName)
-                    startActivityForResult(intent, 2000)
+                    intent.putExtra(ConstantsCustomGallery.INTENT_EXTRA_LIMIT, imageSelectCount)
+                    startActivityForResult(intent, ConstantsCustomGallery.IMAGE_PICKER_REQUEST_CODE)
                 }
             })
     }
@@ -151,19 +168,21 @@ class ImageListActivity : AppCompatActivity() {
 
         override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
             holder.folderTitleTV.text = aData.get(position).name
-            if (aData.get(position).name.equals("Take Photo")) {
-                Glide.with(aContext).load(aData.get(position).cover)
-                    .placeholder(R.drawable.sample_image)
-                    .override(200, 200)
-                    .centerCrop()
-                    .into(holder.imagePickerIV)
-            } else {
-                val uri = Uri.fromFile(File(aData.get(position).cover))
-                Glide.with(aContext).load(uri)
-                    .placeholder(R.drawable.sample_image)
-                    .override(200, 200)
-                    .centerCrop()
-                    .into(holder.imagePickerIV)
+            if (aData.size < 11) {
+                if (aData.get(position).name.equals("Take Photo")) {
+                    Glide.with(aContext).load(aData.get(position).cover)
+                        .placeholder(R.drawable.sample_image)
+                        .override(200, 200)
+                        .centerCrop()
+                        .into(holder.imagePickerIV)
+                } else {
+                    val uri = Uri.fromFile(File(aData.get(position).cover))
+                    Glide.with(aContext).load(uri)
+                        .placeholder(R.drawable.sample_image)
+                        .override(200, 200)
+                        .centerCrop()
+                        .into(holder.imagePickerIV)
+                }
             }
 
             holder.imagePickerIV.setOnClickListener({
@@ -179,6 +198,17 @@ class ImageListActivity : AppCompatActivity() {
                 imagePickerIV = view.findViewById(R.id.imagePickerIV)
                 folderTitleTV = view.findViewById(R.id.folderTitleTV)
             }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == ConstantsCustomGallery.IMAGE_PICKER_REQUEST_CODE
+            && resultCode == RESULT_OK
+            && data != null
+        ) {
+            setResult(RESULT_OK, data)
+            finish()
         }
     }
 }

@@ -6,6 +6,10 @@
     android:layout_height="match_parent"
     tools:context=".ImageItemListActivity">
 
+    <include
+        android:id="@+id/headerTitleBarLayout"
+        layout="@layout/header_title_layout" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/imagePickerRV"
         android:layout_width="0dp"
@@ -13,6 +17,6 @@
         android:nestedScrollingEnabled="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/headerTitleBarLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
