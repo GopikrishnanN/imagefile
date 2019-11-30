@@ -13,5 +13,5 @@
 # And add this to your module's build.gradle
 
         dependencies {
-               implementation 'com.github.GopikrishnanN:imagefile:Tag'
+               implementation 'com.github.GopikrishnanN:imagefile:1.0.0'
         }
