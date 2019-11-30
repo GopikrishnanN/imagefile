@@ -6,4 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".filepicker.FilePickerActivity">
 
+    <include
+        android:id="@+id/headerTitleBarLayout"
+        layout="@layout/header_title_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/fileListRV"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headerTitleBarLayout" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

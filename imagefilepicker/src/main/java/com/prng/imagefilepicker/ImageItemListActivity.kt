@@ -65,7 +65,7 @@ class ImageItemListActivity : AppCompatActivity() {
     private fun initialization() {
         titleTV.setText(getString(R.string.tap_select_image_title_txt))
 
-        doneTV.setText("Done")
+        doneTV.setText(getString(R.string.file_save_done_txt))
         doneTV.visibility = View.GONE
 
 

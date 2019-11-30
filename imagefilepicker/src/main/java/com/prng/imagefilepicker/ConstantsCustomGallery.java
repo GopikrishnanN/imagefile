@@ -23,6 +23,7 @@ public class ConstantsCustomGallery {
     public static final String INTENT_EXTRA_SINGLE = "single";
     public static final String INTENT_EXTRA_MULTIPLE = "multiple";
     public static final String INTENT_EXTRA_COUNTABLE = "Countable";
+    public static final String INTENT_EXTRA_SUFFIX = "suffix";
     public static final int DEFAULT_LIMIT = 10;
 
     //Maximum number of images that can be selected at a time

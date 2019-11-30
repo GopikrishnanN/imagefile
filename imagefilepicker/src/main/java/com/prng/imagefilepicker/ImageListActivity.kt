@@ -43,8 +43,8 @@ class ImageListActivity : AppCompatActivity() {
     private var albums: ArrayList<Album>? = null
     private var imageSelectCount = 0
 
-    companion object{
-       var imageSelectCountable:String? = ""
+    companion object {
+        var imageSelectCountable: String? = ""
     }
 
 
@@ -56,8 +56,11 @@ class ImageListActivity : AppCompatActivity() {
     }
 
     private fun initGetIntent() {
-        imageSelectCountable = intent.extras!!.getString(ConstantsCustomGallery.INTENT_EXTRA_COUNTABLE)
-        imageSelectCount = intent.extras!!.getInt(ConstantsCustomGallery.INTENT_EXTRA_LIMIT)
+        if (intent.hasExtra(ConstantsCustomGallery.INTENT_EXTRA_COUNTABLE))
+            imageSelectCountable =
+                intent.extras!!.getString(ConstantsCustomGallery.INTENT_EXTRA_COUNTABLE)
+        if (intent.hasExtra(ConstantsCustomGallery.INTENT_EXTRA_LIMIT))
+            imageSelectCount = intent.extras!!.getInt(ConstantsCustomGallery.INTENT_EXTRA_LIMIT)
     }
 
     private fun initialization() {
@@ -65,7 +68,7 @@ class ImageListActivity : AppCompatActivity() {
         imagePickerRV.layoutManager =
             GridLayoutManager(applicationContext, 2, GridLayoutManager.VERTICAL, false);
         getFilePaths()
-        titleTV.setText("Select image album")
+        titleTV.setText(getString(R.string.select_image_album_txt))
 
         backIconIV.setOnClickListener({
             finish()
@@ -73,7 +76,6 @@ class ImageListActivity : AppCompatActivity() {
     }
 
     fun getFilePaths() {
-
         val cursor = applicationContext.contentResolver
             .query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
@@ -173,19 +175,19 @@ class ImageListActivity : AppCompatActivity() {
 
         override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
             holder.folderTitleTV.text = aData.get(position).name
-                if (aData.get(position).name.equals("Take Photo")) {
-                    Glide.with(aContext).load(aData.get(position).cover)
-                        .override(200, 200)
-                        .centerCrop()
-                        .into(holder.imagePickerIV)
-                } else {
-                    val uri = Uri.fromFile(File(aData.get(position).cover))
-                    Glide.with(aContext).load(uri)
-                        .placeholder(R.drawable.sample_image)
-                        .override(200, 200)
-                        .centerCrop()
-                        .into(holder.imagePickerIV)
-                }
+            if (aData.get(position).name.equals("Take Photo")) {
+                Glide.with(aContext).load(aData.get(position).cover)
+                    .override(200, 200)
+                    .centerCrop()
+                    .into(holder.imagePickerIV)
+            } else {
+                val uri = Uri.fromFile(File(aData.get(position).cover))
+                Glide.with(aContext).load(uri)
+                    .placeholder(R.drawable.sample_image)
+                    .override(200, 200)
+                    .centerCrop()
+                    .into(holder.imagePickerIV)
+            }
 
             holder.imagePickerIV.setOnClickListener({
                 aChooseImageFolder.ChoosedImage(aData.get(position).name)
