@@ -43,6 +43,10 @@ class ImageListActivity : AppCompatActivity() {
     private var albums: ArrayList<Album>? = null
     private var imageSelectCount = 0
 
+    companion object{
+       var imageSelectCountable:String? = ""
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +56,7 @@ class ImageListActivity : AppCompatActivity() {
     }
 
     private fun initGetIntent() {
+        imageSelectCountable = intent.extras!!.getString(ConstantsCustomGallery.INTENT_EXTRA_COUNTABLE)
         imageSelectCount = intent.extras!!.getInt(ConstantsCustomGallery.INTENT_EXTRA_LIMIT)
     }
 
@@ -168,10 +173,8 @@ class ImageListActivity : AppCompatActivity() {
 
         override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
             holder.folderTitleTV.text = aData.get(position).name
-            if (aData.size < 11) {
                 if (aData.get(position).name.equals("Take Photo")) {
                     Glide.with(aContext).load(aData.get(position).cover)
-                        .placeholder(R.drawable.sample_image)
                         .override(200, 200)
                         .centerCrop()
                         .into(holder.imagePickerIV)
@@ -183,7 +186,6 @@ class ImageListActivity : AppCompatActivity() {
                         .centerCrop()
                         .into(holder.imagePickerIV)
                 }
-            }
 
             holder.imagePickerIV.setOnClickListener({
                 aChooseImageFolder.ChoosedImage(aData.get(position).name)

@@ -20,6 +20,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.prng.imagefilepicker.ImageListActivity.Companion.imageSelectCountable
 import kotlinx.android.synthetic.main.activity_image_item_list.*
 import kotlinx.android.synthetic.main.activity_image_item_list.imagePickerRV
 import kotlinx.android.synthetic.main.activity_image_list.*
@@ -67,6 +68,7 @@ class ImageItemListActivity : AppCompatActivity() {
         doneTV.setText("Done")
         doneTV.visibility = View.GONE
 
+
         doneTV.setOnClickListener({
             val intent = Intent()
             intent.putParcelableArrayListExtra(
@@ -109,6 +111,7 @@ class ImageItemListActivity : AppCompatActivity() {
 
     private fun loadImages() {
 
+        var countSelected = 0
         var file: File?
         val selectedImages = HashSet<Long>()
         if (images != null) {
@@ -167,7 +170,8 @@ class ImageItemListActivity : AppCompatActivity() {
                 }
 
                 if (file!!.exists()) {
-                    temp.add(Image(id, name, path, isSelected))
+                    temp.add(Image(id, name, path, isSelected, countSelected))
+                    countSelected += 1
                 }
 
             } while (cursor.moveToPrevious())
@@ -184,11 +188,24 @@ class ImageItemListActivity : AppCompatActivity() {
             applicationContext,
             images,
             object : ImagePickerAdapter.ChooseSelectImageFolder {
+                override fun SingleSelectImages() {
+                    val intent = Intent()
+                    intent.putParcelableArrayListExtra(
+                        ConstantsCustomGallery.INTENT_EXTRA_IMAGES,
+                        getSelected()
+                    )
+                    setResult(RESULT_OK, intent)
+                    finish()
+                }
+
                 override fun ChoosedImage(countSelected: Int) {
                     if (countSelected == 0) {
                         doneTV.visibility = View.GONE
                     } else {
                         doneTV.visibility = View.VISIBLE
+                    }
+                    if (ConstantsCustomGallery.INTENT_EXTRA_SINGLE.equals(imageSelectCountable)) {
+                        doneTV.visibility = View.GONE
                     }
                 }
 
@@ -236,6 +253,7 @@ class ImageItemListActivity : AppCompatActivity() {
 
         interface ChooseSelectImageFolder {
             fun ChoosedImage(countSelected: Int)
+            fun SingleSelectImages()
         }
 
         override fun getItemCount(): Int {
@@ -245,15 +263,17 @@ class ImageItemListActivity : AppCompatActivity() {
         override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
             val uri = Uri.fromFile(File(aData.get(position).path))
             Glide.with(aContext).load(uri)
-                .placeholder(R.drawable.sample_image)
                 .override(200, 200)
                 .centerCrop()
                 .into(holder.selectImageView)
-
-            if (aData[position].isSelected) {
-                holder.selectImageView.setAlpha(0.5f)
-            } else {
-                holder.selectImageView.setAlpha(1.0f)
+            if (holder.adapterPosition == aData[position].countSelected) {
+                if (aData[position].isSelected) {
+                    holder.selectImageView.setAlpha(0.5f)
+                    holder.selectedTickIV.visibility = View.VISIBLE
+                } else {
+                    holder.selectImageView.setAlpha(1.0f)
+                    holder.selectedTickIV.visibility = View.GONE
+                }
             }
 
             holder.selectImageView.setOnClickListener({
@@ -262,7 +282,12 @@ class ImageItemListActivity : AppCompatActivity() {
                 } else {
                     aData[position].isSelected = false
                 }
-                toggleSelection(position, aData)
+
+                if (ConstantsCustomGallery.INTENT_EXTRA_SINGLE.equals(imageSelectCountable)) {
+                    aChooseSelectImageFolder.SingleSelectImages()
+                } else {
+                    toggleSelection(position, aData)
+                }
             })
         }
 
@@ -277,7 +302,8 @@ class ImageItemListActivity : AppCompatActivity() {
         }
 
         fun toggleSelection(position: Int, aData: ArrayList<Image>) {
-            if (!aData.get(position).isSelected && countSelected >= ConstantsCustomGallery.limit) {
+            if (aData.get(position).isSelected && countSelected == ConstantsCustomGallery.limit) {
+                aData.get(position).isSelected = !aData.get(position).isSelected
                 Toast.makeText(
                     aContext,
                     String.format(
@@ -290,7 +316,6 @@ class ImageItemListActivity : AppCompatActivity() {
                 return
             }
 
-            aData.get(position).isSelected = !aData.get(position).isSelected
             if (aData.get(position).isSelected) {
                 countSelected++
             } else {

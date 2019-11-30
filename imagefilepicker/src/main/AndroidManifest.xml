@@ -3,7 +3,8 @@
     package="com.prng.imagefilepicker">
 
     <application>
-        <activity android:name=".ImageItemListActivity"></activity>
+        <activity android:name=".filepicker.FilePickerActivity"></activity>
+        <activity android:name=".ImageItemListActivity" />
         <activity android:name=".ImageListActivity" />
     </application>
 

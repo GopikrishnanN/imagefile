@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import com.prng.imagefilepicker.ConstantsCustomGallery
 import com.prng.imagefilepicker.Image
 import com.prng.imagefilepicker.ImageListActivity
+import com.prng.imagefilepicker.filepicker.FilePickerActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -27,14 +28,75 @@ class MainActivity : AppCompatActivity() {
                 if (!checkAccessFineLocationPermission() || !checkWriteExternalStoragePermission()) {
                     requestPermission()
                 } else {
-                    startActivityForResult(Intent(applicationContext, ImageListActivity::class.java)
-                        .putExtra(ConstantsCustomGallery.INTENT_EXTRA_LIMIT, 10), ConstantsCustomGallery.IMAGE_PICKER_REQUEST_CODE)
+                    getSinglePicture()
                 }
             } else {
-                startActivityForResult(Intent(applicationContext, ImageListActivity::class.java)
-                    .putExtra(ConstantsCustomGallery.INTENT_EXTRA_LIMIT, 10), ConstantsCustomGallery.IMAGE_PICKER_REQUEST_CODE)
+                getSinglePicture()
             }
         })
+
+        imageMultiplePickerBTN.setOnClickListener({
+            if (Build.VERSION.SDK_INT >= 23) {
+                // Marshmallow+
+                if (!checkAccessFineLocationPermission() || !checkWriteExternalStoragePermission()) {
+                    requestPermission()
+                } else {
+                    getMultiplePicture()
+                }
+            } else {
+                getMultiplePicture()
+            }
+        })
+
+        filePickerBTN.setOnClickListener({
+            if (Build.VERSION.SDK_INT >= 23) {
+                // Marshmallow+
+                if (!checkAccessFineLocationPermission() || !checkWriteExternalStoragePermission()) {
+                    requestPermission()
+                } else {
+                    getSingleFile()
+                }
+            } else {
+                getSingleFile()
+            }
+        })
+
+        filesMultiplePickerBTN.setOnClickListener({
+
+        })
+    }
+
+    private fun getSinglePicture() {
+        startActivityForResult(
+            Intent(applicationContext, ImageListActivity::class.java)
+                .putExtra(ConstantsCustomGallery.INTENT_EXTRA_LIMIT, 10)
+                .putExtra(
+                    ConstantsCustomGallery.INTENT_EXTRA_COUNTABLE,
+                    ConstantsCustomGallery.INTENT_EXTRA_SINGLE
+                ), ConstantsCustomGallery.IMAGE_PICKER_REQUEST_CODE
+        )
+    }
+
+    private fun getMultiplePicture() {
+        startActivityForResult(
+            Intent(applicationContext, ImageListActivity::class.java)
+                .putExtra(ConstantsCustomGallery.INTENT_EXTRA_LIMIT, 10)
+                .putExtra(
+                    ConstantsCustomGallery.INTENT_EXTRA_COUNTABLE,
+                    ConstantsCustomGallery.INTENT_EXTRA_MULTIPLE
+                ), ConstantsCustomGallery.IMAGE_PICKER_REQUEST_CODE
+        )
+    }
+
+    private fun getSingleFile() {
+        startActivityForResult(
+            Intent(applicationContext, FilePickerActivity::class.java)
+                .putExtra(ConstantsCustomGallery.INTENT_EXTRA_LIMIT, 10)
+                .putExtra(
+                    ConstantsCustomGallery.INTENT_EXTRA_COUNTABLE,
+                    ConstantsCustomGallery.INTENT_EXTRA_MULTIPLE
+                ), ConstantsCustomGallery.IMAGE_PICKER_REQUEST_CODE
+        )
     }
 
     private fun checkAccessFineLocationPermission(): Boolean {
@@ -75,7 +137,8 @@ class MainActivity : AppCompatActivity() {
 //            val images =
 //                data.getParcelableArrayListExtra(ConstantsCustomGallery.INTENT_EXTRA_IMAGES)
 
-            var imagesDataArrayList = data.getParcelableArrayListExtra<Image>(ConstantsCustomGallery.INTENT_EXTRA_IMAGES)
+            var imagesDataArrayList =
+                data.getParcelableArrayListExtra<Image>(ConstantsCustomGallery.INTENT_EXTRA_IMAGES)
         }
     }
 

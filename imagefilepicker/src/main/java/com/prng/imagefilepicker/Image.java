@@ -8,12 +8,14 @@ public class Image implements Parcelable {
     public String name = "";
     public String path = "";
     public boolean isSelected = false;
+    public int countSelected = 0;
 
-    public Image(long id, String name, String path, boolean isSelected) {
+    public Image(long id, String name, String path, boolean isSelected, int countSelected) {
         this.id = id;
         this.name = name;
         this.path = path;
         this.isSelected = isSelected;
+        this.countSelected = countSelected;
     }
 
     @Override
