@@ -62,7 +62,16 @@ class MainActivity : AppCompatActivity() {
         })
 
         filesMultiplePickerBTN.setOnClickListener({
-
+            if (Build.VERSION.SDK_INT >= 23) {
+                // Marshmallow+
+                if (!checkAccessFineLocationPermission() || !checkWriteExternalStoragePermission()) {
+                    requestPermission()
+                } else {
+                    getMultipleFile()
+                }
+            } else {
+                getMultipleFile()
+            }
         })
     }
 
@@ -91,6 +100,26 @@ class MainActivity : AppCompatActivity() {
     private fun getSingleFile() {
         startActivityForResult(
             Intent(applicationContext, FilePickerActivity::class.java)
+                .putExtra(
+                    ConstantsCustomGallery.INTENT_EXTRA_SUFFIX,
+                    arrayOf("xlsx", "xls", "doc", "dOcX", "ppt", ".pptx", "pdf")
+                )
+
+                .putExtra(ConstantsCustomGallery.INTENT_EXTRA_LIMIT, 10)
+                .putExtra(
+                    ConstantsCustomGallery.INTENT_EXTRA_COUNTABLE,
+                    ConstantsCustomGallery.INTENT_EXTRA_SINGLE
+                ), ConstantsCustomGallery.IMAGE_PICKER_REQUEST_CODE
+        )
+    }
+
+    private fun getMultipleFile() {
+        startActivityForResult(
+            Intent(applicationContext, FilePickerActivity::class.java)
+                .putExtra(
+                    ConstantsCustomGallery.INTENT_EXTRA_SUFFIX,
+                    arrayOf("xlsx", "xls", "doc", "dOcX", "ppt", ".pptx", "pdf")
+                )
                 .putExtra(ConstantsCustomGallery.INTENT_EXTRA_LIMIT, 10)
                 .putExtra(
                     ConstantsCustomGallery.INTENT_EXTRA_COUNTABLE,
